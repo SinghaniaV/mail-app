@@ -1,5 +1,5 @@
 """
-WSGI config for project3 project.
+WSGI config for mailapp project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
