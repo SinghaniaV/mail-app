@@ -97,3 +97,68 @@ function send_email(){
   .then(response => response.json())
   .then(()=>load_mailbox('sent'));
 }
+
+function display_email(number){
+
+  document.querySelector('#emails-table').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#single-email-view').style.display = 'block';
+  document.querySelector('#emails-view').innerHTML = ``;
+
+  fetch(`/emails/${number}`)
+  .then(response => response.json())
+  .then(email => processEmail(email));
+
+  let processEmail = (email) =>{
+      document.querySelector("#single-email-from").innerHTML=`${email.sender}`;
+      document.querySelector("#single-email-to").innerHTML=`${email.recipients}`;
+      document.querySelector("#single-email-subject").innerHTML=`${email.subject}`;
+      document.querySelector("#single-email-timestamp").innerHTML=`${email.timestamp}`;
+      document.querySelector("#single-email-content").innerHTML=`${email.body}`;
+
+      // mark email as read
+      fetch(`/emails/${email.id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        read: true})
+      })
+
+      // handle archive/unarchive behaviour
+      let old_archiveButton = document.querySelector("#archive-button");
+      let archiveButton = old_archiveButton.cloneNode(true);
+      old_archiveButton.parentNode.replaceChild(archiveButton, old_archiveButton);
+
+      let old_unarchiveButton = document.querySelector("#unarchive-button");
+      let unarchiveButton = old_unarchiveButton.cloneNode(true);
+      old_unarchiveButton.parentNode.replaceChild(unarchiveButton, old_unarchiveButton);
+
+      let old_replyButton = document.querySelector("#reply-button");
+      let replyButton = old_replyButton.cloneNode(true);
+      old_replyButton.parentNode.replaceChild(replyButton, old_replyButton);
+
+      if(current_view == 'sent'){
+        archiveButton.style.display='none';
+      }
+      else{
+        switch (email.archived){
+          case false:
+            // email is not archived
+            archiveButton.style.display='inline';
+            unarchiveButton.style.display='none';
+            archiveButton.addEventListener('click', ()=>archive_email(email.id));
+            break;
+          case true:
+            // email is archived
+            archiveButton.style.display='none';
+            unarchiveButton.style.display='inline';
+            unarchiveButton.addEventListener('click', ()=>unarchive_email(email.id));
+            break;
+        }
+      }
+
+      replyButton.addEventListener('click', ()=>reply_email(email));
+
+
+
+  }
+}
