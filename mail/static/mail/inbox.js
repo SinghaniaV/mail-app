@@ -79,3 +79,21 @@ function load_mailbox(mailbox) {
     })
   }
 }
+
+function send_email(){
+  // get email data
+  let recipients = document.querySelector('#compose-recipients').value;
+  let subject = document.querySelector('#compose-subject').value;
+  let body = document.querySelector("#compose-body").value;
+
+  fetch('/emails', {
+  method: 'POST',
+  body: JSON.stringify({
+      recipients: `${recipients}`,
+      subject: `${subject}`,
+      body: `${body}`
+      })
+  })
+  .then(response => response.json())
+  .then(()=>load_mailbox('sent'));
+}
