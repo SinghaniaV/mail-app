@@ -176,3 +176,17 @@ function archive_email(number){
       }
   )
 }
+
+function unarchive_email(number){
+  // mark email as unarchived
+  fetch(`/emails/${number}`, {
+  method: 'PUT',
+  body: JSON.stringify({
+    archived: false})
+  }).then(
+      ()=>{
+        console.log("UNARCHIVED");
+        load_mailbox('inbox')
+      }
+  )
+}
