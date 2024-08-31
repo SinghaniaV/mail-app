@@ -162,3 +162,17 @@ function display_email(number){
 
   }
 }
+
+function archive_email(number){
+  // mark email as archived
+  fetch(`/emails/${number}`, {
+  method: 'PUT',
+  body: JSON.stringify({
+    archived: true})
+  }).then(
+      ()=>{
+        console.log("ARCHIVED");
+        load_mailbox('archive')
+      }
+  )
+}
